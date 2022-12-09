@@ -3,4 +3,4 @@ project(assignment3)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(assignment3 main.cpp AEvector.cpp AEvector.h)
+add_executable(assignment3 main.cpp)
