@@ -1,5 +1,4 @@
 #include "bits/stdc++.h"
-#include<vector>
 using namespace std;
 template<class T>
 class AEVector{
@@ -7,6 +6,32 @@ private:
     int size;
     T *arr;
 public:
+    class Iterator
+    {
+    public:
+        Iterator();
+        Iterator(const AEVector *pVector, int nIndex): m_pVector(pVector), Indexiter(nIndex){}
+        Iterator &operator++()
+        {
+                ++Indexiter;
+                return *this;
+        }
+        const T &operator*() const
+        {
+            return m_pVector->operator[](Indexiter);
+        }
+        bool operator!=(const Iterator &other)
+        {
+            return (Indexiter != other.Indexiter);
+        }
+        bool operator==(const Iterator &other)
+        {
+            return Indexiter == other.m_nIndex;
+        }
+    private:
+        const AEVector *m_pVector;
+        int Indexiter = -1;
+    };
     AEVector(int newsize=0){
           this->size=size;
           arr=new T[newsize];
@@ -22,6 +47,7 @@ public:
         }
     }
     ~AEVector(){
+        size=0;
         delete []arr;
     }
     AEVector(const AEVector &other){
@@ -62,7 +88,7 @@ public:
         }
         return *this;
     }
-    T& operator[](int index)
+    const T& operator[](int index) const
     {
         try {
             if(index<0 || index>=size){
@@ -102,64 +128,79 @@ public:
             return Item;
         }
     }
-//    void erase(iterator<AEVector<T>>::Iter)
-//    {
-//
-//    }
-//    void erase(iterator1, iterator2)
-//    {
-//
-//    }
-// iterator 1 <= iterator 2 otherwise do nothing
-// Throw exception if any iterator outside range
     void clear()
     {
         size=0;
-        T newarr=new T[0];
+        arr= nullptr;
+    }
+    //---------------------------------------------------------------
+    Iterator begin()
+    {
+        return AEVector<T>::Iterator{this,0};
+    }
+    Iterator end()
+    {
+        return AEVector<T>::Iterator{this,size};
+    }
+    void insert(Iterator iter,T value)
+    {
+        size++;
+        T *newarr=new T[size];int index=0;
+        cout<<*this->begin()<<endl;
+        for(AEVector<T>::Iterator i=Iterator{this,0};i!=Iterator{this,0};++i){
+            if(i!=iter){
+                newarr[index]=*i;
+            }
+            else{
+                newarr[index]=value;index++;
+            }
+            index++;
+        }
         delete arr;
         arr=newarr;
     }
-//    void insert(iterator, T);       // Insert item at iterator
-    // Throw exception if invalid
+    void erase(Iterator iter)
+    {
+        size--;
+        T *newarr=new T[size];int index=0;
+        for(AEVector<T>::Iterator i=this->begin();i!=this->end();++i){
+            if(i!=iter){
+                newarr[index]=*i;
+                index++;
+            }
+        }
+        delete arr;
+        arr=newarr;
+    }
+    void erase(Iterator iter1, Iterator iter2);     // Remove items between
+                                                    // iterator 1 <= iterator 2 otherwise do nothing
+                                                    // Throw exception if any iterator outside range
 
-// Iterators 		// Supports *, + and ++ operations at least
-// Can use: typedef T* iterator
-    // Or u can use std::iterator so you can
-// apply STL algorithms on XYVector
-//    iterator begin();	// Return an iterator (T*)
-//    iterator end()	// Return an iterator (T*)
+    // Iterators 		// Supports *, + and ++ operations at least
+                        // Can use: typedef T* iterator
+                        // Or u can use std::iterator so you can
+                        // apply STL algorithms on XYVector
 
-// Comparison operations
-//    bool operator==(const XYVector<T>&) // Return true if ==
-//    bool operator< (const XYVector<T>&) // Compares item by item
-    // Return true if first different item in this is < in other
+    // Comparison operations
+    bool operator==(const AEVector<T>&); // Return true if ==
+    bool operator< (const AEVector<T>&); // Compares item by item
+                                         //Return true if first different item in this is < in other
 
-// Capacity operations
-//    int size() const     // Return current size of vec
-//    int capacity() const // Return size of current allocated array
-//    int resize()         // Relocate to bigger space
-//    bool empty()         // Return true if size is 0
+    // Capacity operations
+    int Size() const;     // Return current size of vec
+    int capacity() const; // Return size of current allocated array
+    int resize();         // Relocate to bigger space
+    bool empty();         // Return true if size is 0
 
-// Friends
-//    friend ostream& operator << (ostream& out, XYvector<T>)
+    // Friends
+    friend ostream& operator << (ostream& out, AEVector<T>other);
 };
-template <typename T>
-class AEvector
-{
-public:
-    typedef typename std::array<T, 3> array_type;
-    typedef typename array_type::iterator iterator;
-    typedef typename array_type::const_iterator const_iterator;
-    inline iterator begin() noexcept { return vec.begin(); }
-    inline const_iterator cbegin() const noexcept { return vec.cbegin(); }
-    inline iterator end() noexcept { return vec.end(); }
-    inline const_iterator cend() const noexcept { return vec.cend(); }
-private:
-    array_type vec;
-};
+//----------------------------------------------------------------------------------------------------------------------
 int main()
 {
-    AEvector<int>t={1,2,3,4,5,6};
-    AEvector<int>::iterator it=t.begin();
-    cout<<it<<endl;
+    AEVector<int>t;
+    AEVector<int>::Iterator it=t.begin();
+    t.insert(it,5);
+    t.erase(it);
+    cout<<"Eslam"<<endl;
 }
