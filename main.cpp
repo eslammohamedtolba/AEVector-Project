@@ -1,5 +1,7 @@
 #include "bits/stdc++.h"
+
 using namespace std;
+
 template<class T>
 class AEVector {
 private:
@@ -8,7 +10,7 @@ private:
     T *arr;
 public:
     class Iterator {
-        const AEVector *m_pVector;
+        const AEVector *m_pVector{};
         int Indexiter = -1;
     public:
         Iterator() = default;
@@ -20,15 +22,41 @@ public:
             return *this;
         }
 
-        const T &operator*() const {
+        const Iterator operator++(int unused) {
+            Iterator temp = *this;
+            ++Indexiter;
+            return temp;
+        }
+
+        Iterator &operator--() {
+            --Indexiter;
+            return *this;
+        }
+
+        const Iterator operator--(int unused) {
+            Iterator temp = *this;
+            --Indexiter;
+            return temp;
+        }
+
+        int operator-(const Iterator &other) {
+            return Indexiter - other.Indexiter;
+        }
+
+        T &operator*() const {
             return m_pVector->operator[](Indexiter);
         }
+
         bool operator!=(const Iterator &other) {
             return (Indexiter != other.Indexiter);
         }
 
         bool operator==(const Iterator &other) {
             return Indexiter == other.Indexiter;
+        }
+
+        Iterator operator+(int add) {
+            return Iterator(m_pVector, Indexiter + add);
         }
 
         bool operator>(const Iterator &other) {
@@ -39,18 +67,18 @@ public:
             return Indexiter < other.m_nIndex;
         }
 
+
     };
 
     explicit AEVector(int newsize) {
         size = cap = newsize;
         arr = new T[newsize];
-        for (int i = 0; i < newsize; i++) {
-            arr[i] = 0;
-        }
+
     }
 
     explicit AEVector() {
-        this->size = cap = 0;
+
+        size = cap = 0;
         arr = nullptr;
     }
 
@@ -74,7 +102,7 @@ public:
 
     ~AEVector() {
         size = cap = 0;
-        delete arr;
+        delete[]arr;
     }
 
     AEVector &operator=(const AEVector &other) {
@@ -148,69 +176,57 @@ public:
             return Item;
         }
     }
-    
+
     void clear() {
         size = 0;
-        cap=0;
-        delete[]arr;
-        arr = nullptr;
     }
-    
+
     Iterator begin() {
         return AEVector<T>::Iterator{this, 0};
     }
-    
+
     Iterator end() {
         return AEVector<T>::Iterator{this, size};
     }
-    
+
     void insert(Iterator iter, T value) {
-        T *newarr=new T[size+1];int index=0;
-        for(AEVector<T>::Iterator i= this->begin();i!=this->end();++i){
-            if(i!=iter){
-                newarr[index]=*i;
-            }
-            else{
-                newarr[index]=value;
-                index++;
-                newarr[index]=*i;
-            }
-            index++;
+        if (size == cap)cap *= 2;
+        ++size;
+        T *newarr = new T[cap];
+        int index = 0;
+        for (AEVector<T>::Iterator i = this->begin(); i != iter; ++i) {
+            newarr[index] = arr[index];
+            ++index;
         }
-        if(iter==Iterator{this,size}){
-            newarr[size]=value;
+        newarr[index] = value;
+        ++index;
+        for (int i = index - 1; index < size; ++i, ++index) {
+            newarr[index] = arr[i];
         }
-        delete arr;
-        arr=newarr;
-        cap++;
-        size++;
+        arr = newarr;
+        newarr = nullptr;
+        delete[]newarr;
     }
 
     void erase(Iterator iter) {
-        size--;
-        T *newarr=new T[size];int index=0;
-        for(AEVector<T>::Iterator i=this->begin();i!=this->end();++i){
-            if(i!=iter){
-                newarr[index]=*i;
-                index++;
-            }
+
+        AEVector<T>::Iterator j = iter;
+        ++j;
+        for (AEVector<T>::Iterator i = iter; j != this->end(); ++i, ++j) {
+            *i = *j;
         }
-        delete arr;
-        arr=newarr;
+        size--;
     }
 
-     void erase(Iterator iter1, Iterator iter2){
-//         T *newarr=new T[size];int index=0;
-//         for(AEVector<T>::Iterator i=this->begin();i!=this->end();++i){
-//             if(i!=iter){
-//                 newarr[index]=*i;
-//                 index++;
-//             }
-//         }
-//         delete arr;
-//         arr=newarr;
-     }
+    void erase(Iterator iter1, Iterator iter2) {
 
+        AEVector<T>::Iterator i = iter1, j = iter2;
+        for (; j != Iterator(this, size); ++i, ++j) {
+            *i = *j;
+        }
+
+        size -= iter2 - iter1;
+    }
 
     // Remove items between
     // iterator 1 <= iterator 2 otherwise do nothing
@@ -223,16 +239,17 @@ public:
 
     // Comparison operations
     bool operator==(const AEVector<T> &other) { // Return true if ==
-        if (size!= other.size) {
+        if (size != other.size) {
             return false;
         }
-        for (int i = 0; i <size; ++i) {
+        for (int i = 0; i < size; ++i) {
             if (arr[i] != other[i])return false;
         }
         return true;
     }
 
-    bool operator<(const AEVector<T> &other) {  // Compares item by item  //Return true if first different item in this is < in other
+    bool operator<(
+            const AEVector<T> &other) {  // Compares item by item  //Return true if first different item in this is < in other
 
         for (int i = 0; i < min(size, other.Size()); ++i) {
             if (arr[i] != other[i]) {
@@ -250,7 +267,6 @@ public:
 
     int capacity() const { // Return size of current allocated array
         return cap;
-
     }
 
     void resize(int newsize) {// Relocate to bigger space
@@ -277,24 +293,24 @@ public:
     // Friends
     friend ostream &operator<<(ostream &out, AEVector<T> other) {
         for (int i = 0; i < other.Size(); ++i) {
-            cout << other[i]<< ' ';
+            cout << other[i] << ' ';
         }
         return out;
     }
 };
+
 //----------------------------------------------------------------------------------------------------------------------
 int main() {
-    AEVector<int>arr1(5);
-    AEVector<int> arr(5);
-    arr[0]=1;
-    arr[1]=1;
-    arr[2]=1;
-    arr[3]=1;
-    arr[4]=1;
-    AEVector<int>::Iterator it=arr.begin();
-    arr.insert(it,5);
-    for(auto arr4:arr){
-        cout<<arr4<<endl;
+
+    AEVector< int> arr(5);
+    for (int i = 0; i < 5; ++i) {
+        arr[i]=i;
+    }
+    AEVector<int>::Iterator it;
+    it=arr.begin();
+    arr.erase(it+2,arr.end());
+    for (int i = 0; i < arr.Size(); i++) {
+        cout << arr[i] << " ";
     }
 }
 
