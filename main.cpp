@@ -73,7 +73,6 @@ public:
     {
         size=cap=NewVec.size();
         arr=new T[size];int i=0;
-//        cout<<NewVec.size()<<endl;
         for(auto initlist:NewVec){
             arr[i]=initlist;
             i++;
@@ -81,10 +80,14 @@ public:
     }
 
     explicit AEVector(int newsize) {
-        size = cap = newsize;
-        arr = new T[newsize];
+        size=cap=newsize;
+        arr=new T[newsize];
+        if(typeid(T)==typeid(int) || typeid(T)==typeid(long long) || typeid(T)==typeid(bool) || typeid(T)==typeid(float )){
+            for(int i=0;i<newsize;i++){
+                arr[i]=(typeid(T)==typeid(string));
+            }
+        }
     }
-
     explicit AEVector() {
         size = cap = 0;
         arr = nullptr;
@@ -309,14 +312,21 @@ public:
 
 //----------------------------------------------------------------------------------------------------------------------
 int main() {
-
-    AEVector<int>arr={1,2,3,4,5};
-    AEVector<int>::Iterator it=arr.begin();
-    arr.insert(it,0);
-    it=arr.end();
-    arr.insert(it,6);
-    arr.erase(it);
+    AEVector<long long>arr(5);
+//    AEVector<int>arr1={53};
+//    int i=0;
+//    AEVector<int>::Iterator it=arr.begin();
+//    arr.insert(it,0);
+//    it=arr.end();
+//    arr.insert(it,6);
+//    arr.erase(it);
     cout<<arr<<endl;
+//    if(typeid(arr)==typeid(AEVector<string>)){
+//        cout<<"yes"<<endl;
+//    }
+//    else{
+//        cout<<"no"<<endl;
+//    }
 }
 
 
