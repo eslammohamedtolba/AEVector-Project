@@ -82,7 +82,7 @@ public:
     explicit AEVector(int newsize) {
         size=cap=newsize;
         arr=new T[newsize];
-        if(typeid(T)==typeid(int) || typeid(T)==typeid(long long) || typeid(T)==typeid(bool) || typeid(T)==typeid(float )){
+        if(typeid(T)!=typeid(string)){
             for(int i=0;i<newsize;i++){
                 arr[i]=(typeid(T)==typeid(string));
             }
@@ -313,20 +313,7 @@ public:
 //----------------------------------------------------------------------------------------------------------------------
 int main() {
     AEVector<long long>arr(5);
-//    AEVector<int>arr1={53};
-//    int i=0;
-//    AEVector<int>::Iterator it=arr.begin();
-//    arr.insert(it,0);
-//    it=arr.end();
-//    arr.insert(it,6);
-//    arr.erase(it);
     cout<<arr<<endl;
-//    if(typeid(arr)==typeid(AEVector<string>)){
-//        cout<<"yes"<<endl;
-//    }
-//    else{
-//        cout<<"no"<<endl;
-//    }
 }
 
 
