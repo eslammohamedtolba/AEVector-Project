@@ -69,15 +69,23 @@ public:
 
 
     };
+    AEVector(initializer_list<T>NewVec)
+    {
+        size=cap=NewVec.size();
+        arr=new T[size];int i=0;
+//        cout<<NewVec.size()<<endl;
+        for(auto initlist:NewVec){
+            arr[i]=initlist;
+            i++;
+        }
+    }
 
     explicit AEVector(int newsize) {
         size = cap = newsize;
         arr = new T[newsize];
-
     }
 
     explicit AEVector() {
-
         size = cap = 0;
         arr = nullptr;
     }
@@ -302,16 +310,13 @@ public:
 //----------------------------------------------------------------------------------------------------------------------
 int main() {
 
-    AEVector< int> arr(5);
-    for (int i = 0; i < 5; ++i) {
-        arr[i]=i;
-    }
-    AEVector<int>::Iterator it;
-    it=arr.begin();
-    arr.erase(it+2,arr.end());
-    for (int i = 0; i < arr.Size(); i++) {
-        cout << arr[i] << " ";
-    }
+    AEVector<int>arr={1,2,3,4,5};
+    AEVector<int>::Iterator it=arr.begin();
+    arr.insert(it,0);
+    it=arr.end();
+    arr.insert(it,6);
+    arr.erase(it);
+    cout<<arr<<endl;
 }
 
 
