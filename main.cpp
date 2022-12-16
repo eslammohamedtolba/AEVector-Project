@@ -23,13 +23,20 @@ public:
         const T &operator*() const {
             return m_pVector->operator[](Indexiter);
         }
-
         bool operator!=(const Iterator &other) {
             return (Indexiter != other.Indexiter);
         }
 
         bool operator==(const Iterator &other) {
-            return Indexiter == other.m_nIndex;
+            return Indexiter == other.Indexiter;
+        }
+
+        bool operator>(const Iterator &other) {
+            return Indexiter > other.m_nIndex;
+        }
+
+        bool operator<(const Iterator &other) {
+            return Indexiter < other.m_nIndex;
         }
 
     };
@@ -159,20 +166,24 @@ public:
     
     void insert(Iterator iter, T value) {
         T *newarr=new T[size+1];int index=0;
-        for(AEVector<T>::Iterator i= {this,0};i!=Iterator{this,size-1};++i){
+        for(AEVector<T>::Iterator i= this->begin();i!=this->end();++i){
             if(i!=iter){
                 newarr[index]=*i;
             }
             else{
-                newarr[index++]=value;
+                newarr[index]=value;
+                index++;
                 newarr[index]=*i;
             }
             index++;
         }
+        if(iter==Iterator{this,size}){
+            newarr[size]=value;
+        }
         delete arr;
         arr=newarr;
-        size++;
         cap++;
+        size++;
     }
 
     void erase(Iterator iter) {
@@ -186,11 +197,19 @@ public:
         }
         delete arr;
         arr=newarr;
-
     }
 
-    // void erase(Iterator iter1, Iterator iter2){
-    // }
+     void erase(Iterator iter1, Iterator iter2){
+//         T *newarr=new T[size];int index=0;
+//         for(AEVector<T>::Iterator i=this->begin();i!=this->end();++i){
+//             if(i!=iter){
+//                 newarr[index]=*i;
+//                 index++;
+//             }
+//         }
+//         delete arr;
+//         arr=newarr;
+     }
 
 
     // Remove items between
@@ -265,16 +284,18 @@ public:
 };
 //----------------------------------------------------------------------------------------------------------------------
 int main() {
-//    AEVector<int> arr(5);
-//    arr[0]=1;
-//    arr[1]=1;
-//    arr[2]=1;
-//    arr[3]=1;
-//    arr[4]=1;
-//    arr.insert(arr.begin(),5);
-//    arr.insert(arr.begin(),6);
-//    for(int i=0;i<arr.Size();i++){
-//        cout<<arr[i]<<" ";
-//    }
+    AEVector<int>arr1(5);
+    AEVector<int> arr(5);
+    arr[0]=1;
+    arr[1]=1;
+    arr[2]=1;
+    arr[3]=1;
+    arr[4]=1;
+    AEVector<int>::Iterator it=arr.begin();
+    arr.insert(it,5);
+    for(auto arr4:arr){
+        cout<<arr4<<endl;
+    }
 }
+
 
