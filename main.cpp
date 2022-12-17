@@ -69,25 +69,35 @@ public:
 
 
     };
-    AEVector(initializer_list<T>NewVec)
-    {
-        size=cap=NewVec.size();
-        arr=new T[size];int i=0;
-        for(auto initlist:NewVec){
-            arr[i]=initlist;
+
+    AEVector(initializer_list<T> NewVec) {
+        size = cap = NewVec.size();
+        arr = new T[size];
+        int i = 0;
+        for (auto initlist: NewVec) {
+            arr[i] = initlist;
             i++;
         }
     }
 
     explicit AEVector(int newsize) {
-        size=cap=newsize;
-        arr=new T[newsize];
-        if(typeid(T)!=typeid(string)){
-            for(int i=0;i<newsize;i++){
-                arr[i]=(typeid(T)==typeid(string));
+        size = cap = newsize;
+        arr = new T[newsize];
+        if (typeid(T) != typeid(string)) {
+            for (int i = 0; i < newsize; i++) {
+                arr[i] = (typeid(T) == typeid(string));
             }
         }
     }
+
+    explicit AEVector(int newsize, T value) {
+        size = cap = newsize;
+        arr = new T[newsize];
+        for (int i = 0; i < newsize; i++) {
+            arr[i] = value;
+        }
+    }
+
     explicit AEVector() {
         size = cap = 0;
         arr = nullptr;
@@ -281,16 +291,42 @@ public:
     }
 
     void resize(int newsize) {// Relocate to bigger space
-        T newarray = new T[newsize];
         if (newsize > cap) {
             cap = max(2 * cap, newsize);
         }
+
+        T *newarray = new T[cap];
         for (int i = 0; i < size; ++i) {
             newarray[i] = arr[i];
         }
-        for (int i = size; i < newsize; ++i) {
-            newarray[i] = 0;
+        if (typeid(T) != typeid(string)) {
+            for (int i = size; i < newsize; i++) {
+                newarray[i] = (typeid(T) == typeid(string));
+            }
         }
+        size = newsize;
+
+        delete[]arr;
+        arr = newarray;
+        newarray = nullptr;
+        delete[]newarray;
+    }
+
+    void resize(int newsize, T value) {// Relocate to bigger space
+        if (newsize > cap) {
+            cap = max(2 * cap, newsize);
+        }
+
+        T *newarray = new T[cap];
+        for (int i = 0; i < size; ++i) {
+            newarray[i] = arr[i];
+        }
+        for (int i = size; i < newsize; i++) {
+            newarray[i] = value;
+        }
+
+        size = newsize;
+
         delete[]arr;
         arr = newarray;
         newarray = nullptr;
@@ -312,8 +348,13 @@ public:
 
 //----------------------------------------------------------------------------------------------------------------------
 int main() {
-    AEVector<long long>arr(5);
-    cout<<arr<<endl;
+
+    AEVector<string> arr(10, "abdo");
+    arr.push_back("10");
+    arr.resize(20, "50");
+    cout << arr.capacity() << endl;
+
+    cout << arr << endl;
 }
 
 
